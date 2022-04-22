@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "./App.css";
+import Posts from "./componenet/Posts";
+import Profil from "./componenet/Profil";
 
 function App() {
-  return (
+  const [user, setUser] = useState({});
+  const [posts, setPosts] = useState([]);
+  const [show, setshow] = useState(false);
+  useEffect(() => {
+    let result = axios
+      .get("https://jsonplaceholder.typicode.com/users")
+      .then((res) => setUser(res.data[0]))
+      .catch((err) => console.log(err));
+
+    let result2 = axios
+      .get("https://jsonplaceholder.typicode.com/photos")
+      .then((res) => setPosts(res.data.slice(0, 100), setshow(true)))
+      .catch((err) => console.log(err));
+  }, []);
+  return show ? (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Profil user={user} />
+      <Posts posts={posts} />
     </div>
+  ) : (
+    <img className="loader" src="https://i.stack.imgur.com/ATB3o.gif" alt="" />
   );
 }
 
